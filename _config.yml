@@ -1,2 +1,5 @@
 remote_theme: mmistakes/minimal-mistakes
 minimal_mistakes_skin: "dark"
+title: one more blog
+title_seperator: "|"
+name: joeypiccola
