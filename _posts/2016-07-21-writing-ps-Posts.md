@@ -1,5 +1,5 @@
 ---
-title: "a puppet fact for windows domain role
+title: "a puppet fact for windows domain role"
 categories:
   - puppet
 tags:
