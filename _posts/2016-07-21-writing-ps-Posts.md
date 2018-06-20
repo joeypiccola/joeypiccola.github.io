@@ -1,4 +1,13 @@
-# a test post
+---
+title: "a puppet fact for windows domain role
+categories:
+  - puppet
+tags:
+  - powershell
+  - script
+  - puppet
+---
+
 ```powershell
 switch ((Get-WmiObject -Class Win32_ComputerSystem -Property DomainRole).DomainRole) {
     '0' {
