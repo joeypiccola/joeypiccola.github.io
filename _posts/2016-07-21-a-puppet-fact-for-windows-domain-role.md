@@ -8,6 +8,10 @@ tags:
   - puppet
 ---
 
+### the fact
+below is a snippit of PowerShell that could be dropped in `domainrole.ps1`.
+
+
 ```powershell
 switch ((Get-WmiObject -Class Win32_ComputerSystem -Property DomainRole).DomainRole) {
     '0' {
