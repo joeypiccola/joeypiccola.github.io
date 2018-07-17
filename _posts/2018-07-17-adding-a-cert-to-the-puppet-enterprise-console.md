@@ -2,9 +2,11 @@
 title: "Adding a cert to the Puppet Enterprise console."
 tags:
   - puppet
+  - openssl
+  - pki
 ---
 
-# add cert to puppet enterprise console
+The following discusses how to add a certificate to the Puppet Enterprise Console.
 
 1. generate a csr `puppet.piccola.us.csr` and submit it to a CA.
 2. download it `puppet.piccola.us.cer` in `.der` format. once downloaded add it to the personal store of a windows machine then export it with keys and extensions as a `.pfx` (e.g. `puppet.piccola.us.pfx`).
@@ -18,8 +20,9 @@ Mode                LastWriteTime         Length Name
 -a----        6/12/2018   8:16 PM           1384 puppet.piccola.us.csr
 -a----        6/12/2018   8:20 PM           6049 puppet.piccola.us.pfx
 ```
-4. use openssl to convert pfx to pem
+4. install and use openssl to convert pfx to pem
 ```
+choco install openssl.light
 openssl pkcs12 -in puppet.piccola.us.pfx -clcerts -nokeys -out public-console.cert.pem
 Enter Import Password: *****
 ```
@@ -74,4 +77,28 @@ drwxr-xr-x 2 root                root                4096 Jun 12 21:40 old
 10. run `puppet agent -t` on the master
 ```
 root@puppet:~# puppet agent -t
+```
+11. use nmap to verify
+```
+map --script=ssl-cert.nse -p 443 puppet.piccola.us
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2018-07-17 09:53 Mountain Daylight Time
+Nmap scan report for puppet.piccola.us (10.0.3.4)
+Host is up (0.00013s latency).
+
+PORT    STATE SERVICE
+443/tcp open  https
+| ssl-cert: Subject: commonName=puppet.piccola.us
+| Subject Alternative Name: DNS:puppet.piccola.us
+| Issuer: commonName=Piccola Subordinate CA I
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2018-06-13T02:09:48
+| Not valid after:  2020-06-12T02:09:48
+| MD5:   e5a6 bb29 8870 b967 49d2 ecf1 0514 c2a2
+|_SHA-1: eaf5 df14 db39 d2dc e502 3276 862b 0532 1ce1 557e
+MAC Address: 00:50:56:89:9F:17 (VMware)
+
+Nmap done: 1 IP address (1 host up) scanned in 1.45 seconds
 ```
