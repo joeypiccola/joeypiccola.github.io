@@ -78,11 +78,9 @@ drwxr-xr-x 2 root                root                4096 Jun 12 21:40 old
 ```
 root@puppet:~# puppet agent -t
 ```
-11. use nmap to verify. `map --script=ssl-cert.nse -p 443 puppet.piccola.us`
+11. use nmap to verify
 ```
-Starting Nmap 7.60 ( https://nmap.org ) at 2018-07-17 09:53 Mountain Daylight Time
-Nmap scan report for puppet.piccola.us (10.0.3.4)
-Host is up (0.00013s latency).
+c:\> nmap --script=ssl-cert.nse -p 443 puppet.piccola.us
 
 PORT    STATE SERVICE
 443/tcp open  https
