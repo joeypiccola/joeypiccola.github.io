@@ -80,5 +80,7 @@ root@puppet:~# puppet agent -t
 ```
 11. use nmap to verify
 ```
-root@puppet:/opt/puppetlabs/server/data/console-services/certs# ls -la
+c:\> nmap --script=ssl-cert.nse -p 443 puppet.piccola.us
+
+PORT    STATE SERVICE
 ```
