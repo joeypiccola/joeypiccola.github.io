@@ -30,8 +30,7 @@ d:\install_files\cert>copy jenkins.ad.piccola.us.jks "d:\Program Files (x86)\Jen
 ```
 
 4. Update `D:\Program Files (x86)\Jenkins\jenkins.xml`.
-
-```
+```xml
 <arguments>-Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar "%BASE%\jenkins.war" --httpPort=-1 --httpsPort=443 --httpsKeyStore="%JENKINS_HOME%\jenkins.ad.piccola.us.jks" --httpsKeyStorePassword="--REMOVED--" --webroot="%BASE%\war"</arguments>
 ```
 
