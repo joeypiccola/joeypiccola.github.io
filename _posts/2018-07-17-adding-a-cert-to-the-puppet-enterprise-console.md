@@ -82,5 +82,17 @@ root@puppet:~# puppet agent -t
 ```
 c:\> nmap --script=ssl-cert.nse -p 443 puppet.piccola.us
 PORT    STATE SERVICE
-test
+443/tcp open  https
+| ssl-cert: Subject: commonName=puppet.piccola.us
+| Subject Alternative Name: DNS:puppet.piccola.us
+| Issuer: commonName=Piccola Subordinate CA I
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2018-06-13T02:09:48
+| Not valid after:  2020-06-12T02:09:48
+| MD5:   e5a6 bb29 8870 b967 49d2 ecf1 0514 c2a2
+|_SHA-1: eaf5 df14 db39 d2dc e502 3276 862b 0532 1ce1 557e
+MAC Address: 00:50:56:89:9F:17 (VMware)
+Nmap done: 1 IP address (1 host up) scanned in 1.45 seconds
 ```
