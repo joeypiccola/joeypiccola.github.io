@@ -8,7 +8,7 @@ tags:
 
 The following discusses how to add a certificate to the Puppet Enterprise Console.
 
-1. generate a csr `puppet.piccola.us.csr` and submit it to a CA.
+1. generate a csr `puppet.piccola.us.csr` and submit it to a CA. in this example a cert request was generated with PowerShell and submitted to a Microsoft CA.
 2. download it `puppet.piccola.us.cer` in `.der` format. once downloaded add it to the personal store of a windows machine then export it with keys and extensions as a `.pfx` (e.g. `puppet.piccola.us.pfx`).
 3. at this point you should have the following three files.
 ```
@@ -20,25 +20,25 @@ Mode                LastWriteTime         Length Name
 -a----        6/12/2018   8:16 PM           1384 puppet.piccola.us.csr
 -a----        6/12/2018   8:20 PM           6049 puppet.piccola.us.pfx
 ```
-4. install and use openssl to convert pfx to pem
+4. install and use openssl to convert pfx to pem.
 ```
 choco install openssl.light
 openssl pkcs12 -in puppet.piccola.us.pfx -clcerts -nokeys -out public-console.cert.pem
 Enter Import Password: *****
 ```
-5. use openssl to create passphrased private key
+5. use openssl to create passphrased private key.
 ```
 openssl pkcs12 -in puppet.piccola.us.pfx -nocerts -out public-console.private_key_PASSPHRASED_.pem
 Enter Import Password: *****
 Enter PEM pass phrase: *****
 ```
-6. use openssl to remove passphrase from private key
+6. use openssl to remove passphrase from private key.
 ```
 openssl rsa -in public-console.private_key_PASSPHRASED_.pem -out public-console.private_key.pem
 Enter pass phrase for public-console.private_key_PASSPHRASED_.pem: *****
 writing RSA key
 ```
-7. at this point you shoudl have the following six files
+7. at this point you should have the following six files.
 ```
  C:\scripts\puppet_ec_cert\pec> l
     Directory: C:\scripts\puppet_ec_cert\pec
@@ -74,11 +74,11 @@ drwxr-xr-x 2 root                root                4096 Jun 12 21:40 old
 | `browser_ssl_cert` | `/opt/puppetlabs/server/data/console-services/certs/public-console.cert.pem` |
 | `browser_ssl_private_key` | `/opt/puppetlabs/server/data/console-services/certs/public-console.private_key.pem` |
 
-10. run `puppet agent -t` on the master
+10. run `puppet agent -t` on the master.
 ```
 root@puppet:~# puppet agent -t
 ```
-11. use nmap to verify
+11. use nmap's "ssl-cert.nse" script to verify.
 ```
 c:\> nmap --script=ssl-cert.nse -p 443 puppet.piccola.us
 PORT    STATE SERVICE
