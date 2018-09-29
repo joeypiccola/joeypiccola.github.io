@@ -1,5 +1,5 @@
 ---
-title: "Adding a cert to the Puppet Enterprise console."
+title: "Adding a certificate to the Puppet Enterprise console."
 tags:
   - puppet
   - openssl
