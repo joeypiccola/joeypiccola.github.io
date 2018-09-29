@@ -19,10 +19,10 @@ locale                   : "en-US"
 title                    : "things from here and there"
 title_separator          : "-"
 name                     : "Joey Piccola"
-description              : "a description"
-url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+description              : "A collection of automated, engineering and operational accomplishments."
+url                      : "https://www.joeypiccola.com"
 baseurl                  : # the subpath of your site, e.g. "/blog"
-repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
+repository               : "joeypiccola/joeypiccola.github.io"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -102,7 +102,7 @@ analytics:
 author:
   name             : "Joey Piccola"
   avatar           : "/assets/images/avatar_200x200.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "ops guy"
+  bio              : "dev & win ops guy"
   location         : "Denver, CO"
   email            :
   uri              :
