@@ -19,7 +19,7 @@ locale                   : "en-US"
 title                    : "things from here and there"
 title_separator          : "-"
 name                     : "Joey Piccola"
-description              : "A collection of automated, engineering and operational accomplishments."
+description              : "A collection of automation, engineering and operational accomplishments."
 url                      : "https://www.joeypiccola.com"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "joeypiccola/joeypiccola.github.io"
@@ -102,7 +102,7 @@ analytics:
 author:
   name             : "Joey Piccola"
   avatar           : "/assets/images/avatar_200x200.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "dev & win ops guy"
+  bio              : "dev & win ops engineer"
   location         : "Denver, CO"
   email            :
   uri              :
