@@ -5,7 +5,7 @@ tags:
   - powershell
 ---
 
-This is pretty simple. Drop this `domainrole.ps1` wherever you place your facts.
+Not the greatest script, but it gets the job done when you need to make a certificate request with SANs.
 
 ```powershell
 $name = "ws01.ad.piccola.us"
@@ -13,13 +13,13 @@ $san  = "mysite.piccola.us"
 $csrPath = Join-Path -Path 'c:\windows\temp' -ChildPath "$name.csr"
 $infPath = Join-Path -Path 'c:\windows\temp' -ChildPath "$name.inf"
 
-$inf =
+$infContents =
 @"
 [Version]
 Signature = '$Windows NT$'
 
 [NewRequest]
-Subject = "CN=$name, O=Piccola, L=Denver, S=Colorado, C=US"
+Subject = "CN=$name"
 KeySpec = 1
 KeyLength = 2048
 Exportable = TRUE
@@ -43,6 +43,6 @@ _continue_ = "dns=$name&"
 _continue_ = "dns=$san&"
 "@
 
-$inf | out-file -filepath $infPath -force
+$infContents | Out-File -filepath $infPath -force
 certreq -new $infPath $csrPath
 ```
