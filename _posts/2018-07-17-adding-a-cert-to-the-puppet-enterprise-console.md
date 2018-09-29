@@ -82,4 +82,5 @@ root@puppet:~# puppet agent -t
 ```
 c:\> nmap --script=ssl-cert.nse -p 443 puppet.piccola.us
 PORT    STATE SERVICE
+test
 ```
