@@ -19,12 +19,14 @@ Import command completed:  1 entries successfully imported, 0 entries failed or 
 ```
 
 2. Move the generated JKS file from D:\Program Files (x86)\Jenkins\jre\bin to D:\install_files\cert\jenkins.ad.piccola.us.jks. We do this just to keep track of it.
+
 ```
 D:\Program Files (x86)\Jenkins\jre\bin>move jenkins.ad.piccola.us.jks d:\install_files\cert
         1 file(s) moved.
 ```
 
 3. Copy the genereated JKS file from D:\install_files\cert\jenkins.ad.piccola.us.jks to D:\Program Files (x86)\Jenkins\jenkins.ad.piccola.us.jks (aka JENKINS_HOME).
+
 ```
 d:\install_files\cert>copy jenkins.ad.piccola.us.jks "d:\Program Files (x86)\Jenkins"
         1 file(s) copied.
