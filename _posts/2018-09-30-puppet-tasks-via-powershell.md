@@ -8,6 +8,7 @@ tags:
   - orchestration
 ---
 
+
 In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see the following parameters. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
 
 ```json
@@ -58,7 +59,7 @@ $headers = @{'X-Authentication' = $token}
 Invoke-WebRequest -Uri $hoststr -Method Post -Headers $headers -Body $req
 ```
 
-The output is as follows. From here we can see we successfully executed the task and produced the job ID of `494`.
+The output. From here we can see we successfully executed the task and produced the job ID of `494`.
 
 ```
 StatusCode        : 202
@@ -104,11 +105,245 @@ foreach ($item in $content.items) {
 }
 ```
 
-The output.
+The output. Nice, we can see that on our systems we not only have SMBv1 as an enabled protocol but the feature itself is also installed. Lets disable it!
 
 ```
 name                      result
 ----                      ------
 den3-node-3.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
+```
+
+From here, lets modify our task parameters to disable SMBv1. We've changed out `action` param to `set` and also provided the `reboot` parameter with a value of `$true`. We want out systems to reboot so they take SMBv1 changes.
+
+
+```powershell
+$master = 'puppet.piccola.us'
+$token = '***'
+
+$targetNodes = @('den3-node-1.ad.piccola.us','den3-node-3.ad.piccola.us')
+
+$req = [PSCustomObject]@{
+    environment = 'production'
+    task        = 'powershell_tasks::disablesmbv1'
+    params      = [PSCustomOBject]@{
+        action = 'set'
+        reboot = $true
+    }
+    description = 'get smbv1 status'
+    scope       = [PSCustomObject]@{
+        nodes = $targetNodes
+    }
+} | ConvertTo-Json
+
+$hoststr = "https://$master`:8143/orchestrator/v1/command/task"
+$headers = @{'X-Authentication' = $token}
+
+Invoke-WebRequest -Uri $hoststr -Method Post -Headers $headers -Body $req
+```
+
+If we run out task again with `get` we can see that SMBv1 is disabled and uninstalled. Awesome.
+
+```
+name                      result
+----                      ------
+den3-node-3.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
+den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
+```
+
+## Simplified
+
+While this has ben fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. We'll use this function to monitor our job's `state`.
+
+**Get SMBv1 status.**
+
+```powershell
+$master = 'puppet.piccola.us'
+$token = '***'
+
+$scope = @('den3-node-1.ad.piccola.us','den3-node-5.ad.piccola.us')
+$splat = @{
+    Token = $Token
+    Master = $Master
+    Task = 'powershell_tasks::disablesmbv1'
+    Environment = 'production'
+    Parameters = [PSCustomObject]@{
+        action = 'get'
+    }
+    Description = 'Get SMBv1'
+    Scope = $scope
+    ScopeType = 'nodes'
+}
+$taskRunGet = Invoke-PuppetTask @splat -Wait -Timeout 120
+Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunGet.job.name | select name, result
+```
+*Output.*
+```
+name                      result
+----                      ------
+den3-node-5.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
+den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
+```
+
+**Set SMBv1 status.**
+
+
+```powershell
+$master = 'puppet.piccola.us'
+$token = '***'
+
+$scope = @('den3-node-1.ad.piccola.us','den3-node-5.ad.piccola.us')
+$splat = @{
+    Token = $Token
+    Master = $Master
+    Task = 'powershell_tasks::disablesmbv1'
+    Environment = 'production'
+    Parameters = [PSCustomObject]@{
+        action = 'set'
+        reboot = $true
+    }
+    Description = 'Set SMBv1'
+    Scope = $scope
+    ScopeType = 'nodes'
+}
+$taskRunSet = Invoke-PuppetTask @splat -Wait -Timeout 120
+# let the systems reboot and come back up
+Start-Sleep -Seconds 120
+Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunGet.job.name | select name, result
+```
+*Output.*
+```
+name                      result
+----                      ------
+den3-node-5.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
+den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
+```
+
+
+## The Functions
+
+**Get-PuppetJobNodes**
+```powershell
+Function Get-PuppetJobNodes {
+    Param(
+        [Parameter(Mandatory)]
+        [int]$ID,
+        [Parameter(Mandatory)]
+        [string]$Token,
+        [Parameter(Mandatory)]
+        [string]$Master
+    )
+
+    $hoststr = "https://$master`:8143/orchestrator/v1/jobs/$id/nodes"
+    $headers = @{'X-Authentication' = $Token}
+
+    $result  = Invoke-WebRequest -Uri $hoststr -Method Get -Headers $headers
+    $content = $result.content | ConvertFrom-Json
+
+    Write-Output $content.items
+}
+```
+
+**Invoke-PuppetTask**
+```powershell
+Function Invoke-PuppetTask {
+    Param(
+        [Parameter(Mandatory)]
+        [string]$Token,
+        [Parameter(Mandatory)]
+        [string]$Master,
+        [Parameter(Mandatory)]
+        [string]$Task,
+        [Parameter()]
+        [string]$Environment = 'production',
+        [Parameter()]
+        [PSCustomObject]$Parameters = @{},
+        [Parameter()]
+        [string]$Description = '',
+        [Parameter(Mandatory)]
+        [PSCustomObject[]]$Scope,
+        [Parameter(Mandatory)]
+        [ValidateSet('nodes')]
+        [string]$ScopeType,
+        [Parameter()]
+        [switch]$Wait,
+        [Parameter()]
+        [int]$Timeout = 300
+    )
+
+    $req = [PSCustomObject]@{
+        environment = $Environment
+        task        = $Task
+        params      = $Parameters
+        description = $Description
+        scope       = [PSCustomObject]@{
+        $ScopeType = $Scope
+        }
+    } | ConvertTo-Json
+
+    $hoststr = "https://$master`:8143/orchestrator/v1/command/task"
+    $headers = @{'X-Authentication' = $Token}
+
+    $result  = Invoke-WebRequest -Uri $hoststr -Method Post -Headers $headers -Body $req
+    $content = $result.content | ConvertFrom-Json
+
+    if ($wait) {
+        # sleep 5s for the job to register
+        Start-Sleep -Seconds 5
+
+        $jobSplat = @{
+            token = $Token
+            master = $master
+            id = $content.job.name
+        }
+
+        # create a timespan
+        $timespan = New-TimeSpan -Seconds $timeout
+        # start a timer
+        $stopwatch = [diagnostics.stopwatch]::StartNew()
+
+        # get the job state every 5 seconds until our timeout is met
+        while ($stopwatch.elapsed -lt $timespan) {
+            # optoins are new, ready, running, stopping, stopped, finished, or failed
+            $job = Get-PuppetJob @jobSplat
+            if (($job.State -eq 'stopped') -or ($job.State -eq 'finished') -or ($job.State -eq 'failed')) {
+                $taskJobContent = [PSCustomObject]@{
+                    task = $content
+                    job = $job
+                }
+                Write-Output $taskJobContent
+                break
+            }
+            Start-Sleep -Seconds 5
+        }
+        if ($stopwatch.elapsed -ge $timespan) {
+            Write-Error "Timeout of $Timeout`s has exceeded."
+            break
+        }
+    } else {
+        Write-Output $content
+    }
+}
+```
+
+**Get-PuppetJob**
+```powershell
+Function Get-PuppetJob {
+    Param(
+        [Parameter(Mandatory)]
+        [int]$ID,
+        [Parameter(Mandatory)]
+        [string]$Token,
+        [Parameter(Mandatory)]
+        [string]$Master
+    )
+
+    $hoststr = "https://$master`:8143/orchestrator/v1/jobs/$id"
+    $headers = @{'X-Authentication' = $Token}
+
+    $result  = Invoke-WebRequest -Uri $hoststr -Method Get -Headers $headers
+    $content = $result.content | ConvertFrom-Json
+
+    Write-Output $content
+}
 ```
