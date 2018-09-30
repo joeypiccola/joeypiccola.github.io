@@ -18,7 +18,7 @@ tags:
 
 ## The Hard Way
 
-Lets begin by writign the code out manually so we understand what's going on with the `URI`'s and `Invoke-WebRequest`. In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see what it does via the descripton and what parameters it allows. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
+Lets begin by writing the code out manually so we understand what's going on with the `URI`'s and `Invoke-WebRequest`. In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see what it does via the description and what parameters it allows. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
 
 ```json
 {
