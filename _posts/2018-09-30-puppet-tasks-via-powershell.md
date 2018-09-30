@@ -8,7 +8,7 @@ tags:
   - orchestration
 ---
 
-In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see the following parameters.
+In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see the following parameters. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
 
 ```json
 {
@@ -58,7 +58,7 @@ $headers = @{'X-Authentication' = $token}
 Invoke-WebRequest -Uri $hoststr -Method Post -Headers $headers -Body $req
 ```
 
-The output is as follows.
+The output is as follows. From here we can see we successfully executed the task and produced the job ID of `494`.
 
 ```
 StatusCode        : 202
@@ -85,4 +85,30 @@ InputFields       : {}
 Links             : {}
 ParsedHtml        : mshtml.HTMLDocumentClass
 RawContentLength  : 108
+```
+
+That's great, but lets get the output results from each of the nodes we just ran the task on. To do this we'll make a call to the Puppet Orchestrator's `jobs` endpoint. Lets use the `494` job ID from before.
+
+```powershell
+$master = 'puppet.piccola.us'
+$token = '***'
+
+$hoststr = "https://$master`:8143/orchestrator/v1/jobs/494/nodes"
+$headers = @{'X-Authentication' = $Token}
+
+$result  = Invoke-WebRequest -Uri $hoststr -Method Get -Headers $headers
+$content = $result.content | ConvertFrom-Json
+
+foreach ($item in $content.items) {
+    $item | Select-Object name, result
+}
+```
+
+The output.
+
+```
+name                      result
+----                      ------
+den3-node-3.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
+den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
 ```
