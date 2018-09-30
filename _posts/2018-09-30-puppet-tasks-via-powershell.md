@@ -1,5 +1,6 @@
 ---
 title: "Executing Puppet Tasks with PowerShell via the Puppet Orchestrator API"
+excerpt: How to execute Puppet Tasks with PowerShell.
 tags:
   - puppet
   - api
