@@ -1,6 +1,6 @@
 ---
 title: "Executing Puppet Tasks with PowerShell via the Puppet Orchestrator API"
-excerpt: How to execute Puppet Tasks with PowerShell.
+excerpt: Execute PowerShell on remote systems via a Puppet Task triggered via the Puppet API.
 tags:
   - puppet
   - api
