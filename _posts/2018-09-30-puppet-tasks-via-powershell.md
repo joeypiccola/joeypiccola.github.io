@@ -18,7 +18,7 @@ tags:
 
 ## The Hard Way
 
-In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see the following parameters. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
+Lets begin by writign the code out manually so we understand what's going on with the `URI`'s and `Invoke-WebRequest`. In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see what it does via the descripton and what parameters it allows. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
 
 ```json
 {
@@ -123,7 +123,7 @@ den3-node-3.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=Tru
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
 ```
 
-From here, lets modify our task parameters to disable SMBv1. We've changed out `action` param to `set` and also provided the `reboot` parameter with a value of `$true`. We want out systems to reboot so they take SMBv1 changes.
+From here, lets modify our task parameters to disable SMBv1. We've changed our `action` param to `set` and also provided the `reboot` parameter with a value of `$true`. We want our systems to reboot so they take the SMBv1 changes.
 
 
 ```powershell
@@ -139,7 +139,7 @@ $req = [PSCustomObject]@{
         action = 'set'
         reboot = $true
     }
-    description = 'get smbv1 status'
+    description = 'set smbv1 status'
     scope       = [PSCustomObject]@{
         nodes = $targetNodes
     }
@@ -151,7 +151,7 @@ $headers = @{'X-Authentication' = $token}
 Invoke-WebRequest -Uri $hoststr -Method Post -Headers $headers -Body $req
 ```
 
-If we run out task again with `get` we can see that SMBv1 is disabled and uninstalled. Awesome.
+If we run our task again with `get` we can see that SMBv1 is disabled and uninstalled. Awesome.
 
 ```
 name                      result
@@ -162,7 +162,7 @@ den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 
 ## The Easy Way
 
-While this has ben fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. We'll use this function to monitor our job's `state`.
+While this has been fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. `Invoke-PuppetTask` will use this function internally to monitor our job's `state`. You'll see this below with `Invoke-PuppetTask`'s `-Wait` and `-Timeout` parameters.
 
 **Get SMBv1 status.**
 
