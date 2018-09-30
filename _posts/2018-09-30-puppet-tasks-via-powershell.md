@@ -8,6 +8,15 @@ tags:
   - orchestration
 ---
 
+<!-- TOC -->
+
+- [The Hard Way](#the-hard-way)
+- [The Easy Way](#the-easy-way)
+- [The Functions](#the-functions)
+
+<!-- /TOC -->
+
+## The Hard Way
 
 In this example we'll use the Puppet task `powershell_tasks::disablesmbv1`. If we look at the task's metadata file we see the following parameters. To execute this task we'll make a call to the Puppet Orchestrator's `commands` endpoint.
 
@@ -151,7 +160,7 @@ den3-node-3.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
 ```
 
-## Simplified
+## The Easy Way
 
 While this has ben fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. We'll use this function to monitor our job's `state`.
 
