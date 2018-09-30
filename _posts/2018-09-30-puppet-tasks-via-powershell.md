@@ -229,6 +229,7 @@ den3-node-5.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
 ```
 
+Sweet, we've successfully executed PowerShell on remote systems via a Puppet Task triggered via the Puppet API.
 
 ## The Functions
 
