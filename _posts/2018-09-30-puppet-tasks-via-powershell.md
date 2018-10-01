@@ -166,7 +166,6 @@ den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 While this has been fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. `Invoke-PuppetTask` will use this function internally to monitor our job's `state`. You'll see this below with `Invoke-PuppetTask`'s `-Wait` and `-Timeout` parameters.
 
 **First, lets get the current SMBv1 configurations.**
-
 ```powershell
 $master = 'puppet.piccola.us'
 $token = '***'
@@ -196,9 +195,6 @@ den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=Tru
 ```
 
 **Second, lets set the SMBv1 configurations.**
-
-Lets configure "set" SMBv1.
-
 ```powershell
 $master = 'puppet.piccola.us'
 $token = '***'
@@ -221,7 +217,6 @@ Invoke-PuppetTask @splat -Wait -Timeout 120
 ```
 
 **Third, once the systems come back up from rebooting lets get the SMBv1 configurations again.**
-
 ```powershell
 $master = 'puppet.piccola.us'
 $token = '***'
