@@ -167,6 +167,8 @@ While this has been fun, lets wrap all this PowerShell up into a few functions. 
 
 **Get SMBv1 status.**
 
+Lets get the current SMBv1 details.
+
 ```powershell
 $master = 'puppet.piccola.us'
 $token = '***'
@@ -197,6 +199,7 @@ den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=Tru
 
 **Set SMBv1 status.**
 
+Lets set and then get the current SMBv1 details.
 
 ```powershell
 $master = 'puppet.piccola.us'
@@ -219,7 +222,7 @@ $splat = @{
 $taskRunSet = Invoke-PuppetTask @splat -Wait -Timeout 120
 # let the systems reboot and come back up
 Start-Sleep -Seconds 120
-Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunGet.job.name | select name, result
+Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunSet.job.name | select name, result
 ```
 *Output.*
 ```
