@@ -165,7 +165,7 @@ den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 
 While this has been fun, lets wrap all this PowerShell up into a few functions. `Invoke-PuppetTask`, `Get-PuppetJobNodes`, and `Get-PuppetJob`. Note we added `Get-PuppetJob`, this function is going to simply get job details from a supplied Job ID. `Invoke-PuppetTask` will use this function internally to monitor our job's `state`. You'll see this below with `Invoke-PuppetTask`'s `-Wait` and `-Timeout` parameters.
 
-**Get SMBv1 status.**
+1. Get SMBv1 status.
 
 Lets get the current SMBv1 details.
 
@@ -197,9 +197,9 @@ den3-node-5.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=Tru
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=True; Installed_SMB1Protocol=True}
 ```
 
-**Set SMBv1 status.**
+2. Set SMBv1 status.
 
-Lets set and then get the current SMBv1 details.
+Lets configure "set" SMBv1.
 
 ```powershell
 $master = 'puppet.piccola.us'
@@ -219,10 +219,32 @@ $splat = @{
     Scope = $scope
     ScopeType = 'nodes'
 }
-$taskRunSet = Invoke-PuppetTask @splat -Wait -Timeout 120
-# let the systems reboot and come back up
-Start-Sleep -Seconds 120
-Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunSet.job.name | select name, result
+Invoke-PuppetTask @splat -Wait -Timeout 120
+```
+
+3. Get SMBv1 status again.
+
+Once the systems come back up from rebooting lets get the SMBv1 details again.
+
+```powershell
+$master = 'puppet.piccola.us'
+$token = '***'
+
+$scope = @('den3-node-1.ad.piccola.us','den3-node-5.ad.piccola.us')
+$splat = @{
+    Token = $Token
+    Master = $Master
+    Task = 'powershell_tasks::disablesmbv1'
+    Environment = 'production'
+    Parameters = [PSCustomObject]@{
+        action = 'get'
+    }
+    Description = 'Get SMBv1'
+    Scope = $scope
+    ScopeType = 'nodes'
+}
+$taskRunGet = Invoke-PuppetTask @splat -Wait -Timeout 120
+Get-PuppetJobNodes -Token $Token -Master $Master -ID $taskRunGet.job.name | select name, result
 ```
 *Output.*
 ```
@@ -232,7 +254,7 @@ den3-node-5.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=Fa
 den3-node-1.ad.piccola.us @{Enable_SMB1Protocol=False; Installed_SMB1Protocol=False}
 ```
 
-Sweet, we've successfully executed PowerShell on remote systems via a Puppet Task triggered via the Puppet API.
+**Sweet, we've successfully executed PowerShell on remote systems via a Puppet Task triggered via the Puppet API.**
 
 ## The Functions
 
