@@ -1,5 +1,5 @@
 ---
-title: "A Puppet fact for a the OU location of a server in Active Directory"
+title: "A Puppet fact for the OU location of a server in Active Directory"
 tags:
   - puppet
   - powershell
