@@ -5,7 +5,7 @@ tags:
   - powershell
 ---
 
-Drop the fact code wherever you place your facts (e.g. site/profile/facts.d). This will generate a fact named `activedirectory_meta` with the following JSON formatted data. The fact is pretty useful if you want to scope / target your Puppet code based on the location of the node in Active Directory. Credit to the [OneScript Team](https://social.technet.microsoft.com/profile/onescript%20team/) for the `System.DirectoryServices.DirectorySearcher` logic.
+Drop the fact code wherever you place your facts (e.g. site/profile/facts.d). This will generate a fact named `activedirectory_meta` with the following JSON formatted data. The fact is pretty useful if you want to scope / target your Puppet code based on the location of the node in Active Directory. Credit to the [OneScript Team](https://social.technet.microsoft.com/profile/onescript%20team/) for some of the `System.DirectoryServices.DirectorySearcher` logic.
 
 ```json
 {
