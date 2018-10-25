@@ -16,12 +16,13 @@ Drop the fact code wherever you place your facts (e.g. site/profile/facts.d). Th
 }
 ```
 
+
 The fact code.
 ```powershell
 # get the domain role of the machine
-$domainRole = (Get-WmiObject -Class Win32_ComputerSystem -Property DomainRole).DomainRole
+$DomainRole = (Get-WmiObject -Class Win32_ComputerSystem -Property DomainRole).DomainRole
 # if the machine is not a Standalone Workstation or a Standalone Server then attempt to query ad
-if ($domainRole -ne 0 -or $DomainRole -ne 2) {
+if ($DomainRole -match '^(1|3|4|5)') {
     # query ad
     $directorySearcher = New-Object System.DirectoryServices.DirectorySearcher
     $directorySearcher.Filter = "(&(objectCategory=Computer)(Name=$env:ComputerName))"
@@ -39,8 +40,8 @@ if ($domainRole -ne 0 -or $DomainRole -ne 2) {
     $adobj = [PSCustomObject]@{
         activedirectory_meta = $compobj
     }
-
     # write it out
     Write-Output ($adobj | ConvertTo-Json)
+}
 }
 ```
