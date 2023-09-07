@@ -101,8 +101,8 @@ analytics:
 # Site Author
 author:
   name             : "Joey Piccola"
-  avatar           : "/assets/images/avatar_200x200.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "dev & win ops engineer"
+  avatar           : "/assets/images/avatar_200x200.png" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  bio              : "site reliability engineer"
   location         : "Denver, CO"
   email            :
   uri              :
