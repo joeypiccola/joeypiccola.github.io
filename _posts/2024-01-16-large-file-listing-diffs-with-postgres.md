@@ -5,7 +5,7 @@ tags:
   - docker
 ---
 
-I recently needed to know what files were missing from a backup. Directory structure aside, I simply needed to know what files were missing from the destination. Once I got a recursive file listing of both source and destination directories, I imported them into unique postgres tables and did an `LEFT OUTER JOIN` query to see what was present in the source but absent in the destination.
+I recently needed to know what files were missing from a backup (~2 million files). Directory structure aside, I simply needed to know what files were missing from the destination. Once I got a recursive file listing of both source and destination directories, I imported them into unique postgres tables and did a `LEFT OUTER JOIN` query to see what was present in the source but absent in the destination.
 
 ## docker postgres
 
